@@ -1,0 +1,124 @@
+Parte 2 - Creando el modelo en la base de datos
+
+--1. Crear el modelo en una base de datos llamada biblioteca, considerando las tablas definidas y sus atributos.
+	--Creacion de la Base de Datos
+	CREATE DATABASE biblioteca;
+
+	Se ejecuta el Script ->  Biblioteca_BaseDeDatos.sql
+
+--2. Se deben insertar los registros en las tablas correspondientes.
+--Carga de datos tabla autor
+\copy autor(id_autor,nombre,apellido,fecha_nacimiento,fecha_muerte) FROM '/home/claudio/Escritorio/CURSO_Ruby on Riels/Modulo_07/03_Modelamiento_Y_Normalizacion_de_Datos/Prueba/autor.csv' DELIMITER ',' CSV;
+
+nombre | apellido | fecha_nacimiento | fecha_muerte | id_autor
+--------+----------+------------------+--------------+----------
+ JOSE   | SALGADO  | 1968-01-01       | 2020-01-01   |        3
+ ANA    | SALGADO  | 1972-01-01       |              |        4
+ ANDRÉS | ULLOA    | 1982-01-01       |              |        1
+ SERGIO | MARDONES | 1950-01-01       | 2012-01-01   |        2
+ MARTIN | PORTA    | 1976-01-01       |              |        5
+(5 filas)
+
+Debido a que se esta utilizando un campo date, y el valor de los cacmpos fecha estan incompletos se rellenaron son 01, para que se puedan ingresar en forma correcta.
+
+--Carga de datos tabla libro
+\copy libro(id_isbn,titulo,numero_paginas) FROM '/home/claudio/Escritorio/CURSO_Ruby on Riels/Modulo_07/03_Modelamiento_Y_Normalizacion_de_Datos/Prueba/libro.csv' DELIMITER ';' CSV;
+
+         titulo          | numero_paginas |     id_isbn
+-------------------------+----------------+-----------------
+ CUENTOS DE TERROR       |            344 | 111-1111111-111
+ POESÍAS CONTEMPORANEAS  |            167 | 222-2222222-222
+ HISTORIA DE ASIA        |            511 | 333-3333333-333
+ MANUAL DE MECÁNICA      |            298 | 444-4444444-444
+(4 filas)
+
+--Carga de datos tabla autores_libro
+\copy autores_libro(id_isbn,id_autor,tipo_autor) FROM '/home/claudio/Escritorio/CURSO_Ruby on Riels/Modulo_07/03_Modelamiento_Y_Normalizacion_de_Datos/Prueba/autores_libro.csv' DELIMITER ';' CSV;
+
+ tipo_autor | id_autores | id_autor |     id_isbn
+------------+------------+----------+-----------------
+ PRINCIPAL  |          1 |        3 | 111-1111111-111
+ COAUTOR    |          2 |        4 | 111-1111111-111
+ PRINCIPAL  |          3 |        1 | 222-2222222-222
+ PRINCIPAL  |          4 |        2 | 333-3333333-333
+ PRINCIPA   |          5 |        5 | 444-4444444-444
+
+--Carga de datos tabla socio
+\copy socio(id_rut,nombre,apellido,direccion,telefono) FROM '/home/claudio/Escritorio/CURSO_Ruby on Riels/Modulo_07/03_Modelamiento_Y_Normalizacion_de_Datos/Prueba/socio.csv' DELIMITER ';' CSV;
+
+    id_rut     | nombre  | apellido |     direccion      | telefono
+---------------+---------+----------+--------------------+-----------
+ 1111111-1     | JUAN    | SOTO     | AVENIDA 1,SANTIAGO | 911111111
+ 2222222-2     | ANA     | PÉREZ    | PASAJE 2,SANTIAGO  | 922222222
+ 3333333-3     | SANDRA  | AGUILAR  | AVENIDA 2,SANTIAGO | 933333333
+ 4444444-4     | ESTEBAN | JEREZ    | AVENIDA 3,SANTIAGO | 944444444
+ 5555555-5     | SILVANA | MUÑOZ    | PASAJE 3,SANTIAGO  | 955555555
+(5 filas)
+
+--Carga de datos tabla prestamo
+\copy prestamo(id_rut,id_isbn,fecha_inicio,fecha_fin,fecha_entrega_real) FROM '/home/claudio/Escritorio/CURSO_Ruby on Riels/Modulo_07/03_Modelamiento_Y_Normalizacion_de_Datos/Prueba/prestamo.csv' DELIMITER ';' CSV  header;
+
+
+ id_prestamo |     id_isbn     |    id_rut     | fecha_inicio | fecha_fin  | fecha_entrega_real
+-------------+-----------------+---------------+--------------+------------+--------------------
+           1 | 111-1111111-111 | 1111111-1     | 2020-01-20   | 2020-01-27 | 2020-01-27
+           2 | 222-2222222-222 | 5555555-5     | 2020-01-20   | 2020-01-30 | 2020-01-30
+           3 | 333-3333333-333 | 3333333-3     | 2020-01-22   | 2020-01-30 | 2020-01-30
+           4 | 444-4444444-444 | 4444444-4     | 2020-01-23   | 2020-01-30 | 2020-01-30
+           5 | 111-1111111-111 | 2222222-2     | 2020-01-27   | 2020-02-04 | 2020-02-04
+           6 | 444-4444444-444 | 1111111-1     | 2020-01-31   | 2020-02-12 | 2020-02-12
+           7 | 222-2222222-222 | 3333333-3     | 2020-01-31   | 2020-02-12 | 2020-02-12
+(7 filas)
+
+
+
+--3. Realizar las siguientes consultas:
+	a. Mostrar todos los libros que posean menos de 300 páginas.
+
+		SELECT * from libro WHERE numero_paginas < 300;
+
+	    	     titulo          | numero_paginas |     id_isbn
+		-------------------------+----------------+-----------------
+ 		 POESÍAS CONTEMPO RANEAS |            167 | 222-2222222-222
+ 		 MANUAL DE MECÁNICA      |            298 | 444-4444444-444
+		(2 filas)
+
+
+
+	b. Mostrar todos los autores que hayan nacido después del 01-01-1970.
+
+		SELECT * FROM autor WHERE fecha_nacimiento > '01-01-1970';
+
+		 nombre | apellido | fecha_nacimiento | fecha_muerte | id_autor
+		--------+----------+------------------+--------------+----------
+		 ANA    | SALGADO  | 1972-01-01       |              |        4
+ 		 ANDRÉS | ULLOA    | 1982-01-01       |              |        1
+ 		 MARTIN | PORTA    | 1976-01-01       |              |        5
+		(3 filas)
+
+
+
+
+	c. ¿Cuál es el libro más solicitado?
+
+		SELECT count(prestamo.id_isbn)as MaxNumVeces, libro.titulo FROM prestamo  INNER JOIN libro ON prestamo.id_isbn = libro.id_isbn GROUP BY prestamo.id_isbn, libro.titulo ORDER BY MaxNumVeces DESC FETCH FIRST ROW ONLY;
+
+		 maxnumveces |      titulo
+		-------------+-------------------
+        		   2 | CUENTOS DE TERROR
+		(1 fila)
+
+
+	d. Si se cobrara una multa de $100 por cada día de atraso, mostrar cuánto debería pagar cada usuario que entregue el préstamo después de 7 días.
+
+		SELECT (prestamo.fecha_entrega_real-prestamo.fecha_inicio - 7)*100 as MontoAPagar, socio.nombre,socio.apellido FROM prestamo INNER JOIN socio ON prestamo.id_rut=socio.id_rut WHERE (fecha_entrega_real-fecha_inicio)>7;
+
+ 			montoapagar | nombre  | apellido
+		   -------------+---------+----------
+         			300 | SILVANA | MUÑOZ
+         			100 | SANDRA  | AGUILAR
+         			100 | ANA     | PÉREZ
+         			500 | JUAN    | SOTO
+         			500 | SANDRA  | AGUILAR
+			(5 filas)
+
